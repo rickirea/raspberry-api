@@ -12,7 +12,11 @@ router.get('/', (req, res, next) => {
 router.post('/blink', (req, res, next) => {
   try{
     let blinkInterval = setInterval(blinkLED, 250);
-    setTimeout(endBlink, 5000);
+    setTimeout(() => {
+      clearInterval(blinkInterval); // Stop blink intervals
+      LED.writeSync(0); // Turn LED off
+      LED.unexport(); // Unexport GPIO to free resources
+    }, 5000);
     res.status(200).json({message: "Success!!!"});
   }
   catch(err){
