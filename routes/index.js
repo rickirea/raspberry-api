@@ -10,8 +10,14 @@ router.get('/', (req, res, next) => {
 
 /* POST Blink Test */
 router.post('/blink', (req, res, next) => {
-  let blinkInterval = setInterval(blinkLED, 250);
-  setTimeout(endBlink, 5000);
+  try{
+    let blinkInterval = setInterval(blinkLED, 250);
+    setTimeout(endBlink, 5000);
+    res.status(200).json({message: "Success!!!"});
+  }
+  catch(err){
+    res.status(403).json({message: `Error: ${err}`});
+  }
 });
 
 function blinkLED() { //function to start blinking
