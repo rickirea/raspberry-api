@@ -21,6 +21,47 @@ const index = require('./routes/index');
 app.use('/', index);
 
 const PORT = process.env.PORT || 3001
-app.listen(PORT, console.log(`Listening on ${PORT}`));
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
+
+var Gpio = require('onoff').Gpio; //include onoff to interact with the GPIO
+var LED = new Gpio(4, 'out'); //use GPIO pin 4 as output
+var pushButton = new Gpio(17, 'in', 'both'); //use GPIO pin 17 as input, and 'both' button presses, and releases should be handled
+
+server.listen(PORT, console.log(`Listening on ${PORT}`));
+//app.listen(PORT, console.log(`Listening on ${PORT}`));
+
+io.on('connection', function (socket) {
+  //WebSocket Connection
+  var lightvalue = 0; //static variable for current status
+
+  pushButton.watch(function (err, value) { //Watch for hardware interrupts on pushButton
+    if (err) { //if an error
+      console.error('There was an error', err); //output error message to console
+      return;
+    }
+    lightvalue = value;
+    socket.emit('light', lightvalue); //send button status to client
+  });
+  socke
+
+  socket.on('light', function(data) { //get light switch status from client
+    lightvalue = data;
+    if (lightvalue) {
+      console.log(lightvalue); //turn LED on or off, for now we will just show it in console.log
+      LED.writeSync(lightvalue);
+    }
+    else{
+      console.log(lightvalue);
+    }
+  });
+});
+
+process.on('SIGINT', function () { //on ctrl+c
+  LED.writeSync(0); // Turn LED off
+  LED.unexport(); // Unexport LED GPIO to free resources
+  pushButton.unexport(); // Unexport Button GPIO to free resources
+  process.exit(); //exit completely
+});
 
 module.exports = app;
