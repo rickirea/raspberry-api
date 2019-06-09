@@ -35,6 +35,8 @@ io.on('connection', function (socket) {
   //WebSocket Connection
   var lightvalue = 0; //static variable for current status
 
+  socket.emit('notyStatus', LED.readSync());
+
   pushButton.watch(function (err, value) { //Watch for hardware interrupts on pushButton
     if (err) { //if an error
       console.error('There was an error', err); //output error message to console
@@ -43,16 +45,15 @@ io.on('connection', function (socket) {
     lightvalue = value;
     socket.emit('light', lightvalue); //send button status to client
   });
-  socke
 
   socket.on('light', function(data) { //get light switch status from client
     lightvalue = data;
-    if (lightvalue) {
-      console.log(lightvalue); //turn LED on or off, for now we will just show it in console.log
+    console.log("Value Noty: ", socket.id + " / " + lightvalue);
+    socket.broadcast.emit('notyStatus', lightvalue);
+
+    if (lightvalue != LED.readSync()) {
       LED.writeSync(lightvalue);
-    }
-    else{
-      console.log(lightvalue);
+      //socket.emit('notyStatus', lightvalue);
     }
   });
 });

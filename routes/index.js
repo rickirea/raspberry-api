@@ -8,7 +8,7 @@ const router  = express.Router();
 router.get('/', (req, res, next) => {
   //res.send('<h1>RaspBerry Pi</h1>');
   //console.log(__dirname);
-  fs.readFile('/home/ricardo/Documents/Code/raspberrypi/raspberry-api/public/index.html', function(err, data) { //read file index.html in public folder
+  fs.readFile('/home/pi/code/raspberry-api/public/index.html', function(err, data) { //read file index.html in public folder
     if (err) {
       res.writeHead(404, {'Content-Type': 'text/html'}); //display 404 on error
       return res.end("404 Not Found");
