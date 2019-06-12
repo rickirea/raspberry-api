@@ -50,14 +50,8 @@ io.on('connection', function (socket) {
   //WebSocket Connection
   var lightvalue = 0; //static variable for current status
 
-  let data = {
-    red: redRGB,
-    green: greenRGB,
-    blue: blueRGB
-  }
-
   socket.emit('notyStatus', LED.readSync());
-  socket.emit('lightRGB', data, hexRGB)
+  socket.emit('lightRGB', )
 
   pushButton.watch(function (err, value) { //Watch for hardware interrupts on pushButton
     if (err) { //if an error
@@ -93,7 +87,7 @@ io.on('connection', function (socket) {
     ledBlue.pwmWrite(blueRGB);
 
     socket.broadcast.emit('lightRGB', data, hex);
-    socket.emit('lightRGB', data, hexRGB);
+    socket.emit('lightRGB', data, hex);
   });
 });
 
